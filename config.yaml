@@ -1,0 +1,6 @@
+s3:
+  endpoint: "http://localhost:9000"
+  region: "us-east-1"
+  access_key: "minioadmin"
+  secret_key: "minioadmin"
+  bucket: "mybucket"
