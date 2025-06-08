@@ -25,6 +25,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/upload", handler.UploadHandler).Methods("POST")
 	r.HandleFunc("/list", handler.ListObjectsHandler).Methods("GET")
+	r.HandleFunc("/download", handler.DownloadHandler).Methods("GET")
 
 	log.Println("✅ Server running at :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))

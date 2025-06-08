@@ -62,6 +62,7 @@ func InitS3() {
 }
 
 func UploadToS3(key string, body io.Reader, contentType string) error {
+	log.Printf("UploadToS3開始")
 	_, err := client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(key),
@@ -78,4 +79,16 @@ func ListObjects() (*s3.ListObjectsV2Output, error) {
 	ctx := context.TODO()
 	result, err := client.ListObjectsV2(ctx, input)
 	return result, err
+}
+
+func DownloadFromS3(filename string) (io.ReadCloser, string, error) {
+	input := &s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(filename),
+	}
+	result, err := client.GetObject(context.TODO(), input)
+	if err != nil {
+		log.Printf("獲取檔案失敗: %v", err)
+	}
+	return result.Body, *result.ContentType, nil
 }
