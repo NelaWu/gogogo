@@ -2,21 +2,21 @@ package s3client
 
 import (
 	"context"
-	"io"
-	"log"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/spf13/viper"
+	"io"
+	"log"
 )
 
 var client *s3.Client
 var bucket string
 
 func InitS3() {
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
+	ctx := context.TODO()
+	cfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion(viper.GetString("s3.region")),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			viper.GetString("s3.access_key"),
@@ -43,12 +43,14 @@ func InitS3() {
 	bucket = viper.GetString("s3.bucket")
 
 	// 檢查 bucket 是否存在，如果不存在就創建
-	_, err = client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
+	_, err = client.HeadBucket(ctx, &s3.HeadBucketInput{
 		Bucket: aws.String(bucket),
 	})
 	if err != nil {
+		log.Printf("檢查 bucket 失敗: %v，嘗試創建新的 bucket", err)
+
 		// 如果 bucket 不存在，創建它
-		_, err = client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+		_, err = client.CreateBucket(ctx, &s3.CreateBucketInput{
 			Bucket: aws.String(bucket),
 		})
 		if err != nil {
@@ -67,4 +69,13 @@ func UploadToS3(key string, body io.Reader, contentType string) error {
 		ContentType: aws.String(contentType),
 	})
 	return err
+}
+
+func ListObjects() (*s3.ListObjectsV2Output, error) {
+	input := &s3.ListObjectsV2Input{
+		Bucket: aws.String(bucket),
+	}
+	ctx := context.TODO()
+	result, err := client.ListObjectsV2(ctx, input)
+	return result, err
 }

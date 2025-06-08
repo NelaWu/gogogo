@@ -49,4 +49,5 @@
     ```
 3. 執行API
     -upload  
-        `curl -X POST -F "file=@/Users/nela/Documents/kobe.png" http://localhost:8080/upload`
+        `curl -X POST -F "file=@/Users/nela/Documents/kobe.png" http://localhost:8080/upload`  
+        將檔案路徑更換成自己的檔案
