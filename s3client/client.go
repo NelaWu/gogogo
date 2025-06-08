@@ -92,3 +92,13 @@ func DownloadFromS3(filename string) (io.ReadCloser, string, error) {
 	}
 	return result.Body, *result.ContentType, nil
 }
+
+func DeleterFromS3(filename string) error {
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(filename),
+	}
+
+	_, err := client.DeleteObject(context.TODO(), input)
+	return err
+}

@@ -47,7 +47,13 @@
     -e "MINIO_ROOT_PASSWORD=minioadmin" \
     quay.io/minio/minio server /data --console-address ":9001"
     ```
-3. 執行API
-    -upload  
+3. 執行API  
+    - upload  
         `curl -X POST -F "file=@/Users/nela/Documents/kobe.png" http://localhost:8080/upload`  
-        將檔案路徑更換成自己的檔案
+        將檔案路徑更換成自己的檔案  
+    - list  
+     `curl http://localhost:8080/list`  
+    - download  
+     `curl -o kobe.png "http://localhost:8080/download?filename=kobe.png"`  
+    - delete  
+     `curl -X DELETE  http://localhost:8080/delete/kobe.png  `

@@ -26,6 +26,7 @@ func main() {
 	r.HandleFunc("/upload", handler.UploadHandler).Methods("POST")
 	r.HandleFunc("/list", handler.ListObjectsHandler).Methods("GET")
 	r.HandleFunc("/download", handler.DownloadHandler).Methods("GET")
+	r.HandleFunc("/delete/{filename}", handler.DeleteHandler).Methods("DELETE")
 
 	log.Println("✅ Server running at :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))

@@ -8,7 +8,7 @@ import (
 )
 
 func UploadHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(1024 << 20)
+	r.ParseMultipartForm(100 << 20)
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, "❌ 讀取檔案失敗", http.StatusBadRequest)
