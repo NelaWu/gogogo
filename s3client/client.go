@@ -2,6 +2,7 @@ package s3client
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -9,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 	"io"
 	"log"
+	"time"
 )
 
 var client *s3.Client
@@ -63,13 +65,50 @@ func InitS3() {
 
 func UploadToS3(key string, body io.Reader, contentType string) error {
 	log.Printf("UploadToS3開始")
-	_, err := client.PutObject(context.TODO(), &s3.PutObjectInput{
+
+	// 先检查 bucket 是否存在
+	_, err := client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
+		Bucket: aws.String(bucket),
+	})
+
+	if err != nil {
+		log.Printf("Bucket 不存在，嘗試創建: %s", bucket)
+
+		// 创建 bucket
+		_, err = client.CreateBucket(context.TODO(), &s3.CreateBucketInput{
+			Bucket: aws.String(bucket),
+		})
+
+		if err != nil {
+			return fmt.Errorf("創建 bucket 失敗: %v", err)
+		}
+
+		log.Printf("成功創建 bucket: %s", bucket)
+
+		// 等待 bucket 创建完成
+		waiter := s3.NewBucketExistsWaiter(client)
+		err = waiter.Wait(context.TODO(), &s3.HeadBucketInput{
+			Bucket: aws.String(bucket),
+		}, 15*time.Second)
+
+		if err != nil {
+			return fmt.Errorf("等待 bucket 創建完成失敗: %v", err)
+		}
+	}
+
+	// 上传文件
+	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(key),
 		Body:        body,
 		ContentType: aws.String(contentType),
 	})
-	return err
+
+	if err != nil {
+		return fmt.Errorf("上傳文件失敗: %v", err)
+	}
+
+	return nil
 }
 
 func ListObjects() (*s3.ListObjectsV2Output, error) {
