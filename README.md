@@ -19,3 +19,15 @@
 * Swagger：API 文档生成工具
 * Viper（可选）: 配置管理
 * Zap（或 logrus）：结构化日志框架
+
+## 測試方法
+
+首先先 `go run main.go`
+
+### 新增用戶
+```curl -X POST http://localhost:8080/users \
+-H "Content-Type: application/json" \
+-d '{"username":"alice","email":"alice@example.com"}'
+```
+### 查看所有用戶
+`curl http://localhost:8080/users`
