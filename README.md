@@ -31,3 +31,23 @@
 ```
 ### 查看所有用戶
 `curl http://localhost:8080/users`
+
+
+### 註冊
+```
+curl -X POST http://localhost:8080/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test","email":"test@example.com","password":"123456"}'
+```
+### 登入
+``` curl -X POST http://localhost:8080/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test","password":"123456"}'
+```
+
+### 查詢
+```
+curl -X GET http://localhost:8080/api/users \
+-H "Authorization: Bearer 你的token"
+
+```
