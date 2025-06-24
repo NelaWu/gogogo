@@ -1,6 +1,6 @@
 package tag_service
 
-import "github.com/EDDYCJY/go-gin-example/models"
+import "gogogo/models"
 
 type Tag struct {
 	ID         int
